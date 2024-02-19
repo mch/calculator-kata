@@ -1,70 +1,39 @@
 import { describe, test } from "@jest/globals";
-import { Calculator } from "../src/Calculator";
-import {pipe} from "fp-ts/function";
 
 // these tests must be passing in order for the calculator to work
-// todo add more test cases
-
-// type Digit
 
 describe("Calculator tests", () => {
 
-  // function processInputs(digit Digit) {
-  //
-  // }
-
-  describe("when I input 1, I expect 1", () => {
-    // pipe([Digit One], processInputs)
+  test("when I press the [1] button, I expect [     1] to appear on the screen of the calculator", () => {
+    // the calculator gets an input of 1,
+    // assert that the calculator returns 1 to show on the screen
   })
-  /*
 
-      let ``when I input 1, I expect 1``() =
-        [Digit One; ]
-        |> processInputs
-        |> assertResult "1" "1"
+  test("when I press the [2] button, I expect [     2] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 1+, I expect 1``() =
-        [Digit One; MathOp Add]
-        |> processInputs
-        |> assertResult "1+" "1"
+  test("when I press the [1][=] buttons, I expect [     1] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 1=, I expect 1``() =
-        [Digit One; Equals]
-        |> processInputs
-        |> assertResult "1=" "1"
+  test("when I press the [1][+] buttons, I expect [     +] to appear on the screen of the calculator", () => {
 
-    let ``when I input 1+2, I expect 2``() =
-        [Digit One; MathOp Add; Digit Two]
-        |> processInputs
-        |> assertResult "1+2" "2"
+  })
 
-    let ``when I input 1+2=, I expect 3``() =
-        [Digit One; MathOp Add; Digit Two; Equals]
-        |> processInputs
-        |> assertResult "1+2=" "3"
+  test("when I press the [1][+][2] buttons, I expect [     2] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 1+2+, I expect 3``() =
-        [Digit One; MathOp Add; Digit Two; MathOp Add; ]
-        |> processInputs
-        |> assertResult "1+2+" "3"
+  test("when I press the [1][+][2][=] buttons, I expect [     3] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 1+2+4, I expect 4``() =
-        [Digit One; MathOp Add; Digit Two; MathOp Add; Digit Four]
-        |> processInputs
-        |> assertResult "1+2+4" "4"
+  test("when I press the [1][+][2][+] buttons, I expect [     3] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 1+2+4=, I expect 7``() =
-        [Digit One; MathOp Add; Digit Two; MathOp Add; Digit Four; Equals]
-        |> processInputs
-        |> assertResult "1+2+4=" "7"
+  test("when I press the [1][+][2][+][4] buttons, I expect [     4] to appear on the screen of the calculator", () => {
+  })
 
-    let ``when I input 4+-3=, I expect 1``() =
-        [Digit Four; MathOp Add; MathOp Subtract; Digit Three; Equals]
-        |> processInputs
-        |> assertResult "4+-3=" "1"
+  test("when I press the [1][+][2][+][4][=] buttons, I expect [     7] to appear on the screen of the calculator", () => {
+  })
 
-   */
-
-
-  test("move", () => {});
+  test("when I press the [4][+][-][3][=] buttons, I expect [     1] to appear on the screen of the calculator", () => {
+  })
 });
