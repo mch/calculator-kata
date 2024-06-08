@@ -44,3 +44,4 @@ type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDispla
 type GetDisplayNumber = (display: CalculatorDisplay) => Option<CalculatorNumber>
 type SetDisplayNumber = (number: CalculatorNumber) => CalculatorDisplay
 
+type InitState = () => CalculatorState
