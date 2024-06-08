@@ -28,11 +28,7 @@ enum CalculatorAction {
     Clear
 }
 
-export function calculate (input: CalculatorInput, state: CalculatorState) : CalculatorOutput {
-    return undefined
-}
+type Calculate = (input: CalculatorInput, state: CalculatorState) => CalculatorOutput
 
-export function updateDisplayFromDigit (digit: CalculatorDigit, display: CalculatorDisplay) : CalculatorDisplay {
-    return display
-}
+type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
