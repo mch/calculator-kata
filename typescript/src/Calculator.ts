@@ -27,8 +27,14 @@ enum CalculatorAction {
     Equals,
     Clear
 }
+type CalculatorNumber = number
 
+type DoMathOperation = (operation: CalculatorOperation, a: CalculatorNumber, b: CalculatorNumber) => MathOperationResult;
 type Calculate = (input: CalculatorInput, state: CalculatorState) => CalculatorOutput
+enum MathOperationError {
+    DivideByZero
+}
+type MathOperationResult = {data: CalculatorNumber, success: true} | {error: MathOperationError, success: false}
 
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
