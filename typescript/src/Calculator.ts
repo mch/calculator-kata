@@ -45,3 +45,11 @@ type GetDisplayNumber = (display: CalculatorDisplay) => Option<CalculatorNumber>
 type SetDisplayNumber = (number: CalculatorNumber) => CalculatorDisplay
 
 type InitState = () => CalculatorState
+
+type CalculatorServices = {
+    updateDisplayFromDigit: UpdateDisplayFromDigit
+    doMathOperation: DoMathOperation
+    getDisplayNumber: GetDisplayNumber
+    setDisplayNumber: SetDisplayNumber
+    initState: InitState
+}
