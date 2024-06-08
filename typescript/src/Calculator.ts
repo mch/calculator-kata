@@ -1,22 +1,4 @@
-enum CalculatorInput {
-    Zero,
-    One,
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    DecimalSeparator,
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Equals,
-    Clear
-}
+type CalculatorInput = CalculatorDigit | CalculatorOperation | CalculatorAction;
 type CalculatorOutput = unknown
 type CalculatorState = {
     display: CalculatorDisplay
