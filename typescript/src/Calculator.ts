@@ -1,7 +1,10 @@
+import {Option} from "fp-ts/Option";
+
 type CalculatorInput = CalculatorDigit | CalculatorOperation | CalculatorAction;
 type CalculatorOutput = unknown
 type CalculatorState = {
-    display: CalculatorDisplay
+    display: CalculatorDisplay,
+    pendingOperation: Option<[CalculatorOperation, CalculatorNumber]>
 }
 type CalculatorDisplay = string
 enum CalculatorDigit {
@@ -37,4 +40,7 @@ enum MathOperationError {
 type MathOperationResult = {data: CalculatorNumber, success: true} | {error: MathOperationError, success: false}
 
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
+
+type GetDisplayNumber = (display: CalculatorDisplay) => Option<CalculatorNumber>
+type SetDisplayNumber = (number: CalculatorNumber) => CalculatorDisplay
 
