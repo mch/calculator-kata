@@ -41,6 +41,14 @@ enum MathOperationError {
 }
 type MathOperationResult = {data: CalculatorNumber, success: true} | {error: MathOperationError, success: false}
 
+function map<T>(mathOp: MathOperationResult, fn: (data: CalculatorNumber) => T) {
+    if(mathOp.success) {
+        return {success: true, data: fn(mathOp.data)};
+    } else {
+        return mathOp;
+    }
+}
+
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
 type GetDisplayNumber = (display: CalculatorDisplay) => Option<CalculatorNumber>
