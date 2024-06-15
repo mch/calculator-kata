@@ -1,4 +1,4 @@
-import {Option} from "fp-ts/Option";
+import {Option, none} from "fp-ts/Option";
 
 type CalculatorInput = { tag: "CalculatorDigit", value: CalculatorDigit } |
     { tag: "CalculatorOperation", value: CalculatorOperation } |
@@ -64,9 +64,24 @@ function updateDisplayFromDigit(services: CalculatorServices, value: CalculatorD
 
 function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
     if(state.pendingOperation._tag === "Some") {
-
+        const [op, pendingNumber] = state.pendingOperation.value;
+        const currentNumberOption = services.getDisplayNumber(state.display);
+        if(currentNumberOption._tag === "Some") {
+            const currentNumber = currentNumberOption.value;
+            const result = services.doMathOperation(op, pendingNumber, currentNumber);
+            if(result.success) {
+                const newDisplay = services.setDisplayNumber(result.data);
+                const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
+                return newState;
+            } else {
+                return state;
+            }
+        } else {
+            return state;
+        }
+    } else {
+        return state;
     }
-    return undefined;
 }
 
 function updateWithAction(services: CalculatorServices, value: CalculatorAction, state: CalculatorState) {
