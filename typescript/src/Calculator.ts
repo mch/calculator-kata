@@ -62,12 +62,33 @@ function updateDisplayFromDigit(services: CalculatorServices, value: CalculatorD
     return newState;
 }
 
+function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
+    if(state.pendingOperation._tag === "Some") {
+
+    }
+    return undefined;
+}
+
+function updateWithAction(services: CalculatorServices, value: CalculatorAction, state: CalculatorState) {
+    switch (value) {
+        case CalculatorAction.Clear:
+            return services.initState();
+        case CalculatorAction.Equals:
+            return updateDisplayFromPendingOp(services, state);
+        default:
+            const _check:never = value;
+            return _check;
+    }
+    return undefined;
+}
+
 function createCalculate(services: CalculatorServices): Calculate {
     return (input, state) => {
         switch (input.tag) {
             case "CalculatorDigit":
                 return updateDisplayFromDigit(services, input.value, state);
             case "CalculatorAction":
+                return updateWithAction(services, input.value, state);
                 break;
             case "CalculatorOperation":
                 break;
