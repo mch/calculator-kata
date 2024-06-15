@@ -1,4 +1,6 @@
 import {Option, none} from "fp-ts/Option";
+import * as E from "fp-ts/Either";
+import { pipe } from "fp-ts/function";
 
 type CalculatorInput = { tag: "CalculatorDigit", value: CalculatorDigit } |
     { tag: "CalculatorOperation", value: CalculatorOperation } |
@@ -39,15 +41,7 @@ type Calculate = (input: CalculatorInput, state: CalculatorState) => CalculatorO
 enum MathOperationError {
     DivideByZero
 }
-type MathOperationResult = {data: CalculatorNumber, success: true} | {error: MathOperationError, success: false}
-
-function map<T>(mathOp: MathOperationResult, fn: (data: CalculatorNumber) => T) {
-    if(mathOp.success) {
-        return {success: true, data: fn(mathOp.data)};
-    } else {
-        return mathOp;
-    }
-}
+type MathOperationResult = E.Either<CalculatorNumber, MathOperationError>;
 
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
@@ -77,13 +71,14 @@ function updateDisplayFromPendingOp(services: CalculatorServices, state: Calcula
         if(currentNumberOption._tag === "Some") {
             const currentNumber = currentNumberOption.value;
             const result = services.doMathOperation(op, pendingNumber, currentNumber);
-            if(result.success) {
-                const newDisplay = services.setDisplayNumber(result.data);
-                const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
-                return newState;
-            } else {
-                return state;
-            }
+            const newState = pipe(result,
+                E.match(
+                    (data) => {
+                    const newDisplay = services.setDisplayNumber(data);
+                    const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
+                    return newState;},
+                    (error) => { return state }));
+            return newState;
         } else {
             return state;
         }
