@@ -1,8 +1,43 @@
 import { describe, test } from "@jest/globals";
+import * as Calculator from "../src/Calculator"
+import * as O from "fp-ts/Option";
+import * as E from "fp-ts/Either";
+import {
+  CalculatorDigit,
+  CalculatorDisplay,
+  CalculatorNumber,
+  CalculatorOperation,
+  CalculatorServices,
+  CalculatorState, MathOperationResult
+} from "../src/Calculator";
+import {Option} from "fp-ts/Option";
+
 
 // these tests must be passing in order for the calculator to work
 
 describe("Calculator tests", () => {
+
+  test("updateDisplayFromPendingOp, should return empty given display empty and no pending Op", () => {
+    const services: CalculatorServices = {
+      doMathOperation(operation: CalculatorOperation, a: CalculatorNumber, b: CalculatorNumber): MathOperationResult {
+        return E.of(0);
+      }, getDisplayNumber(display: CalculatorDisplay): Option<CalculatorNumber> {
+        return O.none;
+      }, initState(): CalculatorState {
+        return {display: "", pendingOperation: O.none};
+      }, setDisplayNumber(number: CalculatorNumber): CalculatorDisplay {
+        return "";
+      }, updateDisplayFromDigit(digit: CalculatorDigit, display: CalculatorDisplay): CalculatorDisplay {
+        return "";
+      }
+    }
+
+    let calculatorState = Calculator.updateDisplayFromPendingOp(services,
+        {display: "", pendingOperation: O.none});
+
+    expect(calculatorState.display).toBe("");
+    expect(calculatorState.pendingOperation).toBe(O.none);
+  })
 
   test("when I press the [1] button, I expect [     1] to appear on the screen of the calculator", () => {
     // the calculator gets an input of 1,

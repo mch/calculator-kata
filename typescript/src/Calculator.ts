@@ -7,12 +7,13 @@ type CalculatorInput = { tag: "CalculatorDigit", value: CalculatorDigit } |
     { tag: "CalculatorOperation", value: CalculatorOperation } |
     { tag: "CalculatorAction", value: CalculatorAction };
 type CalculatorOutput = unknown
-type CalculatorState = {
+
+export type CalculatorState = {
     display: CalculatorDisplay,
     pendingOperation: Option<[CalculatorOperation, CalculatorNumber]>
 }
-type CalculatorDisplay = string
-enum CalculatorDigit {
+export type CalculatorDisplay = string
+export enum CalculatorDigit {
     Zero,
     One,
     Two,
@@ -25,7 +26,8 @@ enum CalculatorDigit {
     Nine,
     DecimalSeparator
 }
-enum CalculatorOperation {
+
+export enum CalculatorOperation {
     Add,
     Subtract,
     Multiply,
@@ -35,14 +37,15 @@ enum CalculatorAction {
     Equals,
     Clear
 }
-type CalculatorNumber = number
+
+export type CalculatorNumber = number
 
 type DoMathOperation = (operation: CalculatorOperation, a: CalculatorNumber, b: CalculatorNumber) => MathOperationResult;
 type Calculate = (input: CalculatorInput, state: CalculatorState) => CalculatorOutput
-enum MathOperationError {
+export enum MathOperationError {
     DivideByZero
 }
-type MathOperationResult = E.Either<CalculatorNumber, MathOperationError>;
+export type MathOperationResult = E.Either<CalculatorNumber, MathOperationError>;
 
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
@@ -51,7 +54,7 @@ type SetDisplayNumber = (number: CalculatorNumber) => CalculatorDisplay
 
 type InitState = () => CalculatorState
 
-type CalculatorServices = {
+export type CalculatorServices = {
     updateDisplayFromDigit: UpdateDisplayFromDigit
     doMathOperation: DoMathOperation
     getDisplayNumber: GetDisplayNumber
@@ -65,7 +68,7 @@ function updateDisplayFromDigit(services: CalculatorServices, value: CalculatorD
     return newState;
 }
 
-function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
+export function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
     function updateDisplayAndState(data) {
         const newDisplay = services.setDisplayNumber(data);
         const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
@@ -118,3 +121,4 @@ function createCalculate(services: CalculatorServices): Calculate {
         }
     };
 }
+
