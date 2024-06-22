@@ -66,6 +66,12 @@ function updateDisplayFromDigit(services: CalculatorServices, value: CalculatorD
 }
 
 function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
+    function updateDisplayAndState(data) {
+        const newDisplay = services.setDisplayNumber(data);
+        const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
+        return newState;
+    }
+
     if(state.pendingOperation._tag === "Some") {
         const [op, pendingNumber] = state.pendingOperation.value;
         const currentNumberOption = services.getDisplayNumber(state.display);
@@ -73,10 +79,7 @@ function updateDisplayFromPendingOp(services: CalculatorServices, state: Calcula
             const result = services.doMathOperation(op, pendingNumber, currentNumber);
             const newState = pipe(result,
                 E.match(
-                    (data) => {
-                        const newDisplay = services.setDisplayNumber(data);
-                        const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
-                        return newState;},
+                    updateDisplayAndState,
                     (error) => { return state }));
             return newState;
         }), O.getOrElse(() => state));
