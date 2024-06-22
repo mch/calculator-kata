@@ -1,4 +1,5 @@
 import {Option, none} from "fp-ts/Option";
+import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 
@@ -68,20 +69,18 @@ function updateDisplayFromPendingOp(services: CalculatorServices, state: Calcula
     if(state.pendingOperation._tag === "Some") {
         const [op, pendingNumber] = state.pendingOperation.value;
         const currentNumberOption = services.getDisplayNumber(state.display);
-        if(currentNumberOption._tag === "Some") {
-            const currentNumber = currentNumberOption.value;
+        const newState = pipe(currentNumberOption, O.map((currentNumber) => {
             const result = services.doMathOperation(op, pendingNumber, currentNumber);
             const newState = pipe(result,
                 E.match(
                     (data) => {
-                    const newDisplay = services.setDisplayNumber(data);
-                    const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
-                    return newState;},
+                        const newDisplay = services.setDisplayNumber(data);
+                        const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
+                        return newState;},
                     (error) => { return state }));
             return newState;
-        } else {
-            return state;
-        }
+        }), O.getOrElse(() => state));
+        return newState;
     } else {
         return state;
     }
