@@ -75,28 +75,32 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
         return newState;
     }
 
-    function appleSauce([op, pendingNumber]: [CalculatorOperation, CalculatorNumber]) {
-
-        function bananaSauce(currentNumber: number): CalculatorState {
-            const result = services.doMathOperation(op, pendingNumber, currentNumber);
-            const newState = pipe(result,
-                E.match(
-                    updateDisplayAndState,
-                    (error) => {
-                        return state
-                    }));
-            return newState;
-
-        }
-
+    function appleSauce([op, pendingNumber]: [CalculatorOperation, CalculatorNumber]): Option<[CalculatorOperation, CalculatorNumber, number]> {
         const currentNumberOption = services.getDisplayNumber(state.display);
-        const newState = pipe(currentNumberOption, O.map(bananaSauce), O.getOrElse(() => state));
+        return pipe(currentNumberOption, O.map((currentNumber: number) => [op, pendingNumber, currentNumber]));
+    }
+
+    function bananaSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): CalculatorState {
+        const result = services.doMathOperation(op, pendingNumber, currentNumber);
+        const newState = pipe(result,
+            E.match(
+                updateDisplayAndState,
+                (error) => {
+                    return state
+                }));
         return newState;
     }
 
+    // function mangoSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): CalculatorState {
+    //
+    // }
+
     return pipe(state.pendingOperation,
-        O.map(appleSauce),
-        O.getOrElse(() => state));
+        O.map(appleSauce), // (pendingOperation) => [CalculatorOperation, CalculatorNumber, number]
+        O.flatten,
+        O.map(bananaSauce), //[CalculatorOperation, CalculatorNumber, number] => state
+        O.getOrElse(() => state)
+    );
 }
 
 //option<number>.map ((number) => number), if the otion is empty, the map doesn't call the function passed
