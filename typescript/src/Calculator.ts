@@ -76,8 +76,8 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
     }
 
     function appleSauce([op, pendingNumber]: [CalculatorOperation, CalculatorNumber]) {
-        const currentNumberOption = services.getDisplayNumber(state.display);
-        const newState = pipe(currentNumberOption, O.map((currentNumber) => {
+
+        function bananaSauce(currentNumber: number): CalculatorState {
             const result = services.doMathOperation(op, pendingNumber, currentNumber);
             const newState = pipe(result,
                 E.match(
@@ -86,7 +86,11 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
                         return state
                     }));
             return newState;
-        }), O.getOrElse(() => state));
+
+        }
+
+        const currentNumberOption = services.getDisplayNumber(state.display);
+        const newState = pipe(currentNumberOption, O.map(bananaSauce), O.getOrElse(() => state));
         return newState;
     }
 
