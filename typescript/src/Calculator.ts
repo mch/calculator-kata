@@ -75,22 +75,28 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
         return newState;
     }
 
-    if(state.pendingOperation._tag === "Some") {
-        const [op, pendingNumber] = state.pendingOperation.value;
+    function appleSauce([op, pendingNumber]: [CalculatorOperation, CalculatorNumber]) {
         const currentNumberOption = services.getDisplayNumber(state.display);
         const newState = pipe(currentNumberOption, O.map((currentNumber) => {
             const result = services.doMathOperation(op, pendingNumber, currentNumber);
             const newState = pipe(result,
                 E.match(
                     updateDisplayAndState,
-                    (error) => { return state }));
+                    (error) => {
+                        return state
+                    }));
             return newState;
         }), O.getOrElse(() => state));
         return newState;
-    } else {
-        return state;
     }
+
+    return pipe(state.pendingOperation,
+        O.map(appleSauce),
+        O.getOrElse(() => state));
 }
+
+//option<number>.map ((number) => number), if the otion is empty, the map doesn't call the function passed
+//option<number.bin((number) => option<number>)
 
 function updateWithAction(services: CalculatorServices, value: CalculatorAction, state: CalculatorState) {
     switch (value) {
