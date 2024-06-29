@@ -1,7 +1,4 @@
-import * as O from "fp-ts/Option";
-import {none, Option} from "fp-ts/Option";
-import * as E from "fp-ts/Either";
-import {pipe} from "fp-ts/function";
+import { Option as O, Either as E, pipe } from "effect";
 
 type CalculatorInput = { tag: "CalculatorDigit", value: CalculatorDigit } |
     { tag: "CalculatorOperation", value: CalculatorOperation } |
@@ -10,7 +7,7 @@ type CalculatorOutput = unknown
 
 export type CalculatorState = {
     display: CalculatorDisplay,
-    pendingOperation: Option<[CalculatorOperation, CalculatorNumber]>
+    pendingOperation: O.Option<[CalculatorOperation, CalculatorNumber]>
 }
 export type CalculatorDisplay = string
 export enum CalculatorDigit {
@@ -49,7 +46,7 @@ export type MathOperationResult = E.Either<CalculatorNumber, MathOperationError>
 
 type UpdateDisplayFromDigit = (digit: CalculatorDigit, display: CalculatorDisplay) => CalculatorDisplay
 
-type GetDisplayNumber = (display: CalculatorDisplay) => Option<CalculatorNumber>
+type GetDisplayNumber = (display: CalculatorDisplay) => O.Option<CalculatorNumber>
 type SetDisplayNumber = (number: CalculatorNumber) => CalculatorDisplay
 
 type InitState = () => CalculatorState
@@ -71,30 +68,22 @@ function updateDisplayFromDigit(services: CalculatorServices, value: CalculatorD
 export function updateDisplayFromPendingOp(services: CalculatorServices, state: CalculatorState) {
     function updateDisplayAndState(data) {
         const newDisplay = services.setDisplayNumber(data);
-        const newState = Object.assign({}, state, {display: newDisplay, pendingOp: none});
+        const newState = Object.assign({}, state, {display: newDisplay, pendingOp: O.none});
         return newState;
-    }
-
-    function appleSauce([op, pendingNumber]: [CalculatorOperation, CalculatorNumber]): Option<[CalculatorOperation, CalculatorNumber, number]> {
-        const currentNumberOption = services.getDisplayNumber(state.display);
-        return pipe(currentNumberOption, O.map((currentNumber: number) => [op, pendingNumber, currentNumber]));
     }
 
     function bananaSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): MathOperationResult {
         return services.doMathOperation(op, pendingNumber, currentNumber);
     }
 
-    // function mangoSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): CalculatorState {
-    //
-    // }
-
-    return pipe(state.pendingOperation,
-        O.map(appleSauce), // (pendingOperation) => [CalculatorOperation, CalculatorNumber, number]
-        O.flatten,
+    const combineArgs = ([a, b]: [CalculatorOperation, number], c: number): [CalculatorOperation, number, number] => [a, b, c];
+    const foo = O.zipWith(state.pendingOperation, services.getDisplayNumber(state.display), combineArgs);
+    return pipe(
+        foo,
         O.map(bananaSauce),
-        O.getOrElse(() => E.right(MathOperationError.DivideByZero)),
-        E.map(updateDisplayAndState),
-        E.getOrElse(() => state));
+        O.map(E.left),
+        O.map(updateDisplayAndState),
+        O.getOrElse(() => state));
 }
 
 //option<number>.map ((number) => number), if the otion is empty, the map doesn't call the function passed
