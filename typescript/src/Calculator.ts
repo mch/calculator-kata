@@ -1,7 +1,7 @@
-import {Option, none} from "fp-ts/Option";
 import * as O from "fp-ts/Option";
+import {none, Option} from "fp-ts/Option";
 import * as E from "fp-ts/Either";
-import { pipe } from "fp-ts/function";
+import {pipe} from "fp-ts/function";
 
 type CalculatorInput = { tag: "CalculatorDigit", value: CalculatorDigit } |
     { tag: "CalculatorOperation", value: CalculatorOperation } |
@@ -80,15 +80,8 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
         return pipe(currentNumberOption, O.map((currentNumber: number) => [op, pendingNumber, currentNumber]));
     }
 
-    function bananaSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): CalculatorState {
-        const result = services.doMathOperation(op, pendingNumber, currentNumber);
-        const newState = pipe(result,
-            E.match(
-                updateDisplayAndState,
-                (error) => {
-                    return state
-                }));
-        return newState;
+    function bananaSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): MathOperationResult {
+        return services.doMathOperation(op, pendingNumber, currentNumber);
     }
 
     // function mangoSauce([op, pendingNumber, currentNumber]: [CalculatorOperation, CalculatorNumber, number]): CalculatorState {
@@ -98,9 +91,10 @@ export function updateDisplayFromPendingOp(services: CalculatorServices, state: 
     return pipe(state.pendingOperation,
         O.map(appleSauce), // (pendingOperation) => [CalculatorOperation, CalculatorNumber, number]
         O.flatten,
-        O.map(bananaSauce), //[CalculatorOperation, CalculatorNumber, number] => state
-        O.getOrElse(() => state)
-    );
+        O.map(bananaSauce),
+        O.getOrElse(() => E.right(MathOperationError.DivideByZero)),
+        E.map(updateDisplayAndState),
+        E.getOrElse(() => state));
 }
 
 //option<number>.map ((number) => number), if the otion is empty, the map doesn't call the function passed
